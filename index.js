@@ -61,7 +61,7 @@ async function run() {
 
         //get operations
         app.get('/books', async ( req, res ) => {
-            const cursor = collection.find()
+            const cursor = collection.find().sort({price: 1})
             const result = await cursor.toArray()
             res.send(result)
         })
