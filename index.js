@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 const port = process.env.PORT || 3000
 const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -7,7 +8,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 app.use(cors())
 app.use(express.json())
 
-const uri = "mongodb+srv://skeletonDB:oDiHqEmt7A1Z8f0a@tanvir369.ymezqkm.mongodb.net/?appName=Tanvir369";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@tanvir369.ymezqkm.mongodb.net/?appName=Tanvir369`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -25,18 +26,18 @@ async function run() {
     try {
         await client.connect()
 
-        const skeletonDB = client.db("skeletondb")
-        const collection = skeletonDB.collection("books")
+        const QuickHire = client.db("quickhire")
+        const collection = QuickHire.collection("jobs")
 
         // post operations
-        app.post('/books', async(req, res) => {
-            const newBooks = req.body;
-            const result = await collection.insertOne(newBooks)
+        app.post('/jobs', async(req, res) => {
+            const newJobs = req.body;
+            const result = await collection.insertOne(newJobs)
             res.send(result)
         })
 
         //delete operations
-        app.delete('/books/:id', async(req, res) => {
+        app.delete('/jobs/:id', async(req, res) => {
             const id = req.params.id
             const query = {_id: new ObjectId(id)}
             const result = await collection.deleteOne(query)
@@ -44,7 +45,7 @@ async function run() {
         })
 
         // update operations
-        app.patch('/books/:id', async (req, res) =>{
+        app.patch('/jobs/:id', async (req, res) =>{
             const id = req.params.id
             const query = {_id: new ObjectId(id)}
             const updateNEW = req.body
@@ -60,14 +61,14 @@ async function run() {
         })
 
         //get operations
-        app.get('/books', async ( req, res ) => {
+        app.get('/jobs', async ( req, res ) => {
             const cursor = collection.find().sort({price: 1})
             const result = await cursor.toArray()
             res.send(result)
         })
 
         //get a single 
-        app.get('/books/:id', async (req,res) => {
+        app.get('/jobs/:id', async (req,res) => {
             const id = req.params.id
             const query = {_id: new ObjectId(id)}
             const result = await collection.findOne(query)
@@ -91,5 +92,3 @@ app.listen(port, () =>{
 
  
 
-// oDiHqEmt7A1Z8f0a
-// skeletonDB
